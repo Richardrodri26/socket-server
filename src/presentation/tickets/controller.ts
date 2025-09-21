@@ -1,45 +1,47 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
+import { TicketService } from '../services/ticket.service';
+
 
 
 export class TicketController {
 
+  // DI - WssService
+  constructor(
+    private readonly ticketService = new TicketService(),
+  ) {}
 
-  constructor() {
-  }
 
   public getTickets = async (req: Request, res: Response) => {
-
-    res.json('Get Tickets');
-
+    res.json( this.ticketService.tickets );
   }
 
   public getLastTicketNumber = async (req: Request, res: Response) => {
-
-    res.json('Get Last Ticket Number'); 
+    res.json( this.ticketService.lastTicketNumber );
   }
 
   public pendingTickets = async (req: Request, res: Response) => {
-
-    res.json('Get Pending Tickets'); 
-  } 
-
-  public createTicket = async (req: Request, res: Response) => {
-
-    res.json('Create Ticket'); 
+    res.json( this.ticketService.pendingTickets );
   }
 
-  public drawTicket = async (req: Request, res: Response) => {  
+  public createTicket = async (req: Request, res: Response) => {
+    res.status(201).json( this.ticketService.createTicket() );
+  }
 
-    res.json('Draw Ticket');
+  public drawTicket = async (req: Request, res: Response) => {
+    const { desk } = req.params;
+    res.json( this.ticketService.drawTicket(desk) );
   }
 
   public ticketFinished = async (req: Request, res: Response) => {
-
-    res.json('Ticket Finished');
+    const { ticketId } = req.params;
+    
+    res.json( this.ticketService.onFinishedTicket(ticketId) );
   }
 
   public workingOn = async (req: Request, res: Response) => {
-
-    res.json('Working On');
+    res.json( this.ticketService.lastWorkingOnTickets );
   }
-}
+
+
+
+} 
